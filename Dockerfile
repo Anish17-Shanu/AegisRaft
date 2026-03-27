@@ -6,6 +6,7 @@ RUN mvn -q -DskipTests package
 
 FROM eclipse-temurin:17-jre
 WORKDIR /app
+LABEL org.opencontainers.image.authors="Anish Kumar"
 COPY --from=build /workspace/target/aegisraft-1.0.0.jar /app/aegisraft.jar
 COPY config /app/config
 ENTRYPOINT ["java", "-jar", "/app/aegisraft.jar"]

@@ -9,6 +9,12 @@
     <name>AegisRaft</name>
     <description>Fault-tolerant distributed consensus engine implementing Raft in Java 17.</description>
 
+    <developers>
+        <developer>
+            <name>Anish Kumar</name>
+        </developer>
+    </developers>
+
     <properties>
         <maven.compiler.release>17</maven.compiler.release>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

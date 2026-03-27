@@ -1,5 +1,9 @@
 # AegisRaft
 
+## Creator
+
+This project was created, written, and maintained by **Anish Kumar**.
+
 AegisRaft is a Java 17 implementation of the Raft consensus algorithm that runs each node as an independent HTTP service and exposes a strongly consistent replicated key-value store.
 
 ## What is implemented
