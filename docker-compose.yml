@@ -1,0 +1,26 @@
+version: "3.9"
+
+services:
+  node1:
+    build: .
+    command: ["--config", "/app/config/node1.properties"]
+    ports:
+      - "8081:8081"
+    volumes:
+      - ./data/node1:/app/data/node1
+
+  node2:
+    build: .
+    command: ["--config", "/app/config/node2.properties"]
+    ports:
+      - "8082:8082"
+    volumes:
+      - ./data/node2:/app/data/node2
+
+  node3:
+    build: .
+    command: ["--config", "/app/config/node3.properties"]
+    ports:
+      - "8083:8083"
+    volumes:
+      - ./data/node3:/app/data/node3
