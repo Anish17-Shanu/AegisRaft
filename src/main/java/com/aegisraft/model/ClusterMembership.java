@@ -59,7 +59,6 @@ public record ClusterMembership(Map<String, String> voters, Map<String, String> 
         return payload;
     }
 
-    @SuppressWarnings("unchecked")
     public static ClusterMembership fromMap(Map<String, Object> payload) {
         Object votersValue = payload.get("voters");
         Object nextVotersValue = payload.get("nextVoters");

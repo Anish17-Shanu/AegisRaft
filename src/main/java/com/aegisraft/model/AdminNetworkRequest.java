@@ -15,7 +15,6 @@ public record AdminNetworkRequest(List<String> blockedPeerIds, long artificialDe
         return payload;
     }
 
-    @SuppressWarnings("unchecked")
     public static AdminNetworkRequest fromMap(Map<String, Object> payload) {
         List<String> blockedPeerIds = new ArrayList<>();
         Object peers = payload.get("blockedPeerIds");

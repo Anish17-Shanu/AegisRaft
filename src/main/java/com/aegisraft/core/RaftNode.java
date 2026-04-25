@@ -26,7 +26,6 @@ import com.aegisraft.state.KeyValueStateMachine;
 import com.aegisraft.util.Clock;
 import java.io.IOException;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
@@ -37,6 +36,7 @@ import java.util.Optional;
 import java.util.Random;
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -224,7 +224,11 @@ public final class RaftNode implements AutoCloseable {
         } catch (TimeoutException exception) {
             pendingCommits.remove(newIndex);
             return new ClientPutResponse(true, false, config.nodeId(), "commit_timeout", newIndex);
-        } catch (Exception exception) {
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            pendingCommits.remove(newIndex);
+            return new ClientPutResponse(true, false, config.nodeId(), "commit_interrupted", newIndex);
+        } catch (ExecutionException exception) {
             pendingCommits.remove(newIndex);
             return new ClientPutResponse(true, false, config.nodeId(), "commit_failed", newIndex);
         }
@@ -363,7 +367,11 @@ public final class RaftNode implements AutoCloseable {
         try {
             future.get(config.clientCommitTimeoutMillis(), TimeUnit.MILLISECONDS);
             return true;
-        } catch (Exception exception) {
+        } catch (InterruptedException exception) {
+            Thread.currentThread().interrupt();
+            pendingCommits.remove(index);
+            return false;
+        } catch (ExecutionException exception) {
             pendingCommits.remove(index);
             return false;
         }
@@ -621,7 +629,9 @@ public final class RaftNode implements AutoCloseable {
             } else {
                 long newNextIndex = response.conflictTerm() <= 0
                     ? response.conflictIndex()
-                    : findLastIndexOfTerm(response.conflictTerm()).orElse(response.conflictIndex());
+                    : findLastIndexOfTerm(response.conflictTerm())
+                        .map(Long::longValue)
+                        .orElseGet(response::conflictIndex);
                 nextIndex.put(peer.id(), Math.max(1, newNextIndex));
             }
         } finally {
