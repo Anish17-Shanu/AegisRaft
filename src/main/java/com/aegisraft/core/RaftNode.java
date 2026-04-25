@@ -367,6 +367,9 @@ public final class RaftNode implements AutoCloseable {
         try {
             future.get(config.clientCommitTimeoutMillis(), TimeUnit.MILLISECONDS);
             return true;
+        } catch (TimeoutException exception) {
+            pendingCommits.remove(index);
+            return false;
         } catch (InterruptedException exception) {
             Thread.currentThread().interrupt();
             pendingCommits.remove(index);
